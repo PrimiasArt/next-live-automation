@@ -29,22 +29,24 @@ Hệ thống tự động hóa chuyển cảnh, phát video livestream và quả
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt & Chạy
+---
 
-### 1. Yêu cầu hệ thống
-- Python 3.10 hoặc 3.11
-- OBS Studio (phiên bản 28.0 trở lên, đã bật WebSocket server tại cổng `4455`)
+## 🚀 Hai Phiên Bản Hoạt Động Song Song
 
-### 2. Cài đặt thư viện
-```bash
-pip install -r requirements.txt
-```
+Dự án cung cấp 2 phiên bản độc lập để bạn linh hoạt sử dụng:
 
-### 3. Khởi chạy ứng dụng
-```bash
-python run.py
-```
-Hệ thống sẽ tự động mở trình duyệt tại địa chỉ: `http://localhost:5000`
+### 1. Bản 1-Click Cục Bộ (`CHAY_LIVE.bat`)
+- Nhấp đúp vào file **`CHAY_LIVE.bat`**.
+- Hệ thống tự kiểm tra thư viện, tự kết nối OBS nội bộ `127.0.0.1:4455`, tự động mở **Cloudflare Tunnel** sinh link online bảo mật HTTPS (`https://xxx.trycloudflare.com`) để điều khiển từ xa qua điện thoại.
+
+### 2. Bản Web Thuần GitHub Pages (`docs/`)
+- Chạy 100% bằng JavaScript trực tiếp trên trình duyệt, không cần cài đặt Python.
+- Cách kích hoạt trên GitHub:
+  1. Vào kho mã nguồn trên GitHub: **Settings** &rarr; **Pages**.
+  2. Tại mục **Build and deployment** &rarr; **Source**: Chọn **Deploy from a branch**.
+  3. Chọn Branch: **`master`** và Folder: **`/docs`** &rarr; Bấm **Save**.
+  4. GitHub sẽ cấp đường link: `https://<username>.github.io/next-live-automation/`.
+  5. Bất kỳ ai mở link này trên máy tính có OBS đều có thể điều khiển trực tiếp OBS của máy tính đó!
 
 ---
 

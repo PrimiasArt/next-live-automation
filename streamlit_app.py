@@ -2,12 +2,14 @@ import streamlit as st
 import time
 import os
 import sys
+import re
 
 # Đảm bảo đường dẫn import
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from config import OBS_HOST, OBS_PORT, OBS_PASSWORD
 from core.profile_manager import profile_manager
+from core.quota_manager import quota_manager
 import obsws_python as obs
 
 # Cấu hình trang Streamlit
@@ -31,20 +33,13 @@ st.markdown("""
         text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
         font-size: 1.8rem;
     }
-    .status-card {
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 16px;
-    }
-    .video-btn {
-        background: rgba(30, 41, 59, 0.6);
-        border: 1px solid rgba(71, 85, 105, 0.5);
-        border-radius: 8px;
-        padding: 10px;
-        text-align: center;
-        transition: 0.2s;
+    .auth-card {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-top: 4px solid #0284c7;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
     div[data-testid="stSidebar"] {
         background-color: #0d121d;
@@ -54,6 +49,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Khởi tạo session state
+if "is_authorized" not in st.session_state:
+    st.session_state.is_authorized = False
+if "api_key_id" not in st.session_state:
+    st.session_state.api_key_id = None
+if "quota_remaining" not in st.session_state:
+    st.session_state.quota_remaining = 0
 if "obs_host" not in st.session_state:
     st.session_state.obs_host = OBS_HOST
 if "obs_port" not in st.session_state:
@@ -65,11 +66,63 @@ if "active_scene" not in st.session_state:
 if "current_video" not in st.session_state:
     st.session_state.current_video = "Chế độ chờ (Vui lòng chọn Scene)"
 
-# Hàm kết nối OBS Client
+# =========================================================================
+# 1. MÀN HÌNH KHÓA XÁC THỰC CLOUD API KEY (SUPABASE AUTH)
+# =========================================================================
+if not st.session_state.is_authorized:
+    st.write("")
+    st.write("")
+    col_left, col_center, col_right = st.columns([1, 1.8, 1])
+    with col_center:
+        st.markdown("""
+        <div class="auth-card text-center">
+            <h2 style="color:#38bdf8; font-weight:900; margin-bottom:4px;">🔑 HLC CLOUD</h2>
+            <p style="color:#94a3b8; font-size:12px; margin-bottom:20px; text-transform:uppercase; letter-spacing:1px;">
+                HỆ THỐNG ĐIỀU KHIỂN THỜI GIAN LIVE STREAM
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        input_key = st.text_input("Nhập Cloud API Key:", type="password", placeholder="NHẬP CLOUD API KEY ĐỂ KÍCH HOẠT", label_visibility="collapsed")
+        
+        if st.button("KÍCH HOẠT HỆ THỐNG ⚡", type="primary", use_container_width=True):
+            if not input_key.strip():
+                st.error("Vui lòng nhập Cloud API Key!")
+            else:
+                with st.spinner("Đang xác thực khóa qua Supabase Cloud..."):
+                    res = quota_manager.validate_api_key(input_key)
+                    if res.get("success"):
+                        st.session_state.is_authorized = True
+                        st.session_state.api_key_id = res.get("key_id")
+                        st.session_state.quota_remaining = res.get("quota_remaining", 0)
+                        st.success(f"Kích hoạt thành công! Hạn mức: {st.session_state.quota_remaining} Credits")
+                        time.sleep(0.5)
+                        st.rerun()
+                    else:
+                        st.error(res.get("message", "API Key không hợp lệ!"))
+                        
+        st.caption("🔒 Bản quyền được quản lý và bảo vệ bởi Supabase Cloud Authentication.")
+    st.stop()  # Dừng ở đây nếu chưa xác thực, không hiển thị Dashboard
+
+# =========================================================================
+# 2. HÀM KẾT NỐI OBS CLIENT (TỰ ĐỘNG TÁCH HOST & PORT NẾU DÙNG NGROK)
+# =========================================================================
+def parse_host_port(raw_host, raw_port):
+    """Hỗ trợ tự tách host và port nếu người dùng paste nguyên link tcp://0.tcp.ap.ngrok.io:12345"""
+    clean_host = raw_host.strip().replace("tcp://", "")
+    if ":" in clean_host:
+        parts = clean_host.split(":")
+        return parts[0], int(parts[1])
+    try:
+        return clean_host, int(raw_port)
+    except Exception:
+        return clean_host, 4455
+
 @st.cache_resource
 def get_obs_client(host, port, password):
     try:
-        kwargs = {"host": host, "port": int(port)}
+        h, p = parse_host_port(str(host), str(port))
+        kwargs = {"host": h, "port": p, "timeout": 4}
         if password:
             kwargs["password"] = password
         client = obs.ReqClient(**kwargs)
@@ -79,19 +132,29 @@ def get_obs_client(host, port, password):
 
 client, conn_err = get_obs_client(st.session_state.obs_host, st.session_state.obs_port, st.session_state.obs_password)
 
-# --- SIDEBAR: CẤU HÌNH KẾT NỐI OBS & RTMP ---
+# =========================================================================
+# 3. SIDEBAR: KẾT NỐI OBS & RTMP STREAM
+# =========================================================================
 with st.sidebar:
+    # Hiển thị Quota & Đăng xuất
+    st.markdown(f"**Credits Hạn Mức:** 🟡 `{st.session_state.quota_remaining} Credits`")
+    if st.button("🔒 Khóa hệ thống / Đăng xuất", use_container_width=True):
+        st.session_state.is_authorized = False
+        st.rerun()
+
+    st.markdown("---")
     st.markdown("### 🔌 Kết Nối OBS Studio")
+    
     col_h, col_p = st.columns([2, 1])
     with col_h:
-        new_host = st.text_input("OBS Host", value=st.session_state.obs_host, help="Dùng 127.0.0.1 nếu chạy local, hoặc ngrok host nếu chạy qua Streamlit Cloud")
+        new_host = st.text_input("OBS Host", value=st.session_state.obs_host, placeholder="127.0.0.1 hoặc ngrok")
     with col_p:
         new_port = st.text_input("Port", value=str(st.session_state.obs_port))
-    new_pass = st.text_input("Password", value=st.session_state.obs_password, type="password")
+    new_pass = st.text_input("Mật khẩu OBS", value=st.session_state.obs_password, type="password")
 
     if st.button("🔄 Kết nối lại OBS", use_container_width=True):
         st.session_state.obs_host = new_host
-        st.session_state.obs_port = int(new_port)
+        st.session_state.obs_port = new_port
         st.session_state.obs_password = new_pass
         st.cache_resource.clear()
         st.rerun()
@@ -100,12 +163,22 @@ with st.sidebar:
         st.success("🟢 OBS: Đã kết nối WebSocket v5")
     else:
         st.error(f"🔴 OBS: Chưa kết nối ({conn_err})")
+        # Hướng dẫn kết nối khi chạy trên Streamlit Cloud
+        st.info("""
+        💡 **Bạn đang mở web trên Streamlit Cloud:**
+        Server Cloud không thể truy cập trực tiếp `127.0.0.1` của máy bạn.
+        
+        👉 **Để kết nối OBS trên máy tính:**
+        1. Mở PowerShell trên máy tính gõ:
+           `ngrok tcp 4455`
+        2. Copy link (ví dụ: `0.tcp.ap.ngrok.io:14231`) dán vào ô **OBS Host** ở trên rồi bấm **Kết nối lại OBS**.
+        """)
 
     st.markdown("---")
     st.markdown("### 📡 Cấu Hình RTMP Stream")
     
     # Template chọn nhanh
-    tmpl = st.selectbox("Chọn nhanh nền tảng:", ["-- Chọn mẫu --", "TikTok Live", "Shopee Live", "Facebook Live", "YouTube Live"])
+    tmpl = st.selectbox("Chọn nhanh nền tảng:", ["-- Tùy chỉnh --", "TikTok Live", "Shopee Live", "Facebook Live", "YouTube Live"])
     default_server = ""
     if tmpl == "TikTok Live":
         default_server = "rtmp://live-upload.tiktok.com/live/"
@@ -153,7 +226,9 @@ with st.sidebar:
         except Exception:
             st.warning("Không lấy được trạng thái stream từ OBS")
 
-# --- MAIN PANEL: ĐIỀU KHIỂN SCENE & VIDEO MATRIX ---
+# =========================================================================
+# 4. MAIN PANEL: ĐIỀU KHIỂN SCENE & VIDEO MATRIX
+# =========================================================================
 st.markdown("<div class='neon-title'>🎬 HLC CLOUD | LIVE AUTOMATION DASHBOARD</div>", unsafe_allow_html=True)
 st.caption("Quản lý chuyển cảnh đa thương hiệu, tự động nhận diện video base_xxx và điều khiển OBS từ xa.")
 
@@ -215,7 +290,6 @@ if st.session_state.active_scene and client:
 
         if videos:
             st.markdown("##### 🎛️ Ma Trận Video Matrix Grid (Bấm để phát hoặc chọn):")
-            # Render grid 5 cột
             cols = st.columns(5)
             for idx, v in enumerate(videos):
                 c = cols[idx % 5]
@@ -226,7 +300,6 @@ if st.session_state.active_scene and client:
                     
                     if st.button(btn_label, key=f"vid_{idx}", use_container_width=True):
                         try:
-                            # Bật video được chọn và tắt các video base_ khác
                             items = client.get_scene_item_list(st.session_state.active_scene).scene_items
                             for it in items:
                                 s_name = it.get('sourceName', '')

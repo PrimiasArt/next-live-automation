@@ -17,6 +17,10 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Binaries
+bin/*.exe
+bin/*.zip
+
 # Scratch and test logs
 scratch/
 *.log

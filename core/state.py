@@ -18,6 +18,7 @@ class AppState:
         
         # Profile ban đầu là None (Không có scene mặc định)
         self.current_profile = None
+        self.public_url = None
         
         # Event để hỗ trợ Fast Switch (cắt ngang video ngay lập tức)
         self.fast_switch_event = threading.Event()
@@ -113,6 +114,7 @@ class AppState:
                 "queue": list(self.task_queue),
                 "quota_remaining": self.quota_remaining,
                 "logs": list(self.web_logs),
+                "public_url": self.public_url,
                 "current_profile": p_dict
             }
 

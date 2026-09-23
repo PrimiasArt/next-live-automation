@@ -79,6 +79,15 @@
                         <p class="text-slate-400 text-xs font-mono">OBS SCENE DISCOVERY PROTOCOL</p>
                     </div>
                 </div>
+                <!-- Badge hiển thị Link Online tự động -->
+                <div id="public-link-box" class="hidden items-center gap-1.5 px-3 py-1.5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-emerald-300 text-xs shadow-lg">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-[11px] text-slate-300 font-semibold">Web Online:</span>
+                    <a id="public-link-url" href="#" target="_blank" class="font-mono text-sky-400 hover:underline truncate max-w-[190px]">Đang tạo link...</a>
+                    <button type="button" onclick="copyPublicLink()" class="p-1 hover:text-white bg-slate-800/80 rounded" title="Sao chép link gửi sang điện thoại">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Điều khiển Scene OBS & Quota -->
@@ -543,9 +552,30 @@
                     n.classList.toggle('video-active', isPlaying);
                 });
 
+                // Cập nhật Link Web Online (Cloudflare Tunnel)
+                const pubBox = document.getElementById('public-link-box');
+                const pubUrlEl = document.getElementById('public-link-url');
+                if (d.public_url && pubBox && pubUrlEl) {
+                    pubBox.classList.remove('hidden');
+                    pubBox.classList.add('flex');
+                    pubUrlEl.innerText = d.public_url.replace('https://', '');
+                    pubUrlEl.href = d.public_url;
+                }
+
             } catch(e) {}
         }
         setInterval(updateCycle, 500);
+
+        function copyPublicLink() {
+            const pubUrlEl = document.getElementById('public-link-url');
+            if (pubUrlEl && pubUrlEl.href && pubUrlEl.href !== '#' && !pubUrlEl.href.endsWith('#')) {
+                navigator.clipboard.writeText(pubUrlEl.href).then(() => {
+                    alert("✅ Đã sao chép link Web Online vào clipboard!\nBạn có thể gửi link này qua Zalo/Messenger để mở trên điện thoại điều khiển từ xa.");
+                }).catch(() => {
+                    prompt("Sao chép link điều khiển từ xa:", pubUrlEl.href);
+                });
+            }
+        }
 
         // --- CÀI ĐẶT RTMP & ĐIỀU KHIỂN STREAM TRỰC TIẾP OBS ---
         let isStreamingActive = false;

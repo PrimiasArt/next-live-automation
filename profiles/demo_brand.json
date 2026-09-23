@@ -1,0 +1,14 @@
+{
+  "id": "demo_brand",
+  "name": "Thương hiệu Mẫu (Demo 6 Videos)",
+  "scene_name": "DemoScene",
+  "overlap_time": 1.0,
+  "videos": [
+    {"name": "base_demo_intro", "duration": 30.0, "title": "Giới thiệu phiên Live"},
+    {"name": "base_demo_sp1", "duration": 45.0, "title": "Sản phẩm Flash Sale 1"},
+    {"name": "base_demo_sp2", "duration": 40.0, "title": "Sản phẩm Hot 2"},
+    {"name": "base_demo_deal", "duration": 25.0, "title": "Công bố Voucher"},
+    {"name": "base_demo_sp3", "duration": 50.0, "title": "Sản phẩm Combo 3"},
+    {"name": "base_demo_outro", "duration": 35.0, "title": "Kêu gọi follow & Hẹn giờ"}
+  ]
+}

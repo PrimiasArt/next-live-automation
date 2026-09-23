@@ -1,0 +1,7 @@
+{
+  "id": "standby",
+  "name": "Scene: Standby",
+  "scene_name": "Standby",
+  "overlap_time": 1.0,
+  "videos": []
+}

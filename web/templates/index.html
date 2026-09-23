@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HLC CLOUD | MULTI-BRAND LIVE AUTOMATION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #07090e; color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; }
+        .neon-text { color: #38bdf8; text-shadow: 0 0 12px rgba(56, 189, 248, 0.6); }
+        .neon-amber { color: #f59e0b; text-shadow: 0 0 12px rgba(245, 158, 11, 0.5); }
+        .neon-emerald { color: #10b981; text-shadow: 0 0 12px rgba(16, 185, 129, 0.5); }
+        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.6); }
+        .glass-card { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(71, 85, 105, 0.4); }
+        
+        .video-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
+        }
+        .video-card:hover {
+            transform: translateY(-2px);
+            border-color: #38bdf8;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25);
+            background: rgba(30, 58, 138, 0.3);
+        }
+        .video-active {
+            background: linear-gradient(135deg, #0284c7, #0ea5e9) !important;
+            color: #ffffff !important;
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 25px rgba(14, 165, 233, 0.8) !important;
+            font-weight: bold;
+            transform: scale(1.02);
+        }
+        .ft-btn-on {
+            border-color: #f59e0b !important;
+            background: rgba(245, 158, 11, 0.15) !important;
+            color: #fbbf24 !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+        .terminal { font-family: 'Courier New', Courier, monospace; background: #05070a; border: 1px solid #1e293b; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f17; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="p-6 min-h-screen flex flex-col justify-between">
+    <!-- Màn hình khóa xác thực Cloud API Key -->
+    <div id="auth" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 {{ 'hidden' if is_authorized else '' }}">
+        <div class="glass p-10 rounded-2xl w-[28rem] text-center border-t-4 border-sky-500 shadow-2xl">
+            <div class="inline-block p-3 rounded-full bg-sky-500/10 mb-4 border border-sky-500/30">
+                <svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+            </div>
+            <h1 class="text-3xl font-black neon-text mb-1 tracking-wider">HLC CLOUD</h1>
+            <p class="text-slate-400 text-xs mb-6 uppercase tracking-widest font-mono">DYNAMIC OBS LIVE AUTOMATION v15.0</p>
+            <input type="password" id="key-input" class="w-full p-3.5 bg-slate-900 border border-slate-700 rounded-xl mb-4 text-center text-white outline-none focus:border-sky-500 tracking-widest font-mono text-sm transition-all" placeholder="NHẬP CLOUD API KEY">
+            <button onclick="validateCloudKey()" class="w-full p-3.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl uppercase tracking-wider transition-all shadow-lg shadow-sky-600/30">KÍCH HOẠT HỆ THỐNG</button>
+            <p id="error-msg" class="text-rose-400 mt-4 text-xs font-semibold hidden"></p>
+        </div>
+    </div>
+
+    <!-- Container Chính -->
+    <div class="max-w-7xl mx-auto w-full flex-grow">
+        <!-- Header -->
+        <header class="flex flex-wrap justify-between items-center gap-4 mb-6 pb-4 border-b border-slate-800">
+            <div class="flex items-center gap-4">
+                <div class="p-2.5 bg-sky-500/10 border border-sky-500/30 rounded-xl">
+                    <svg class="w-7 h-7 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight">HLC <span class="neon-text">HYBRID CENTER</span></h1>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span id="status-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-950/60 text-amber-400 border border-amber-700/50">
+                            🟡 CHẾ ĐỘ CHỜ (STANDBY)
+                        </span>
+                        <p class="text-slate-400 text-xs font-mono">OBS SCENE DISCOVERY PROTOCOL</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Điều khiển Scene OBS & Quota -->
+            <div class="flex flex-wrap gap-3 items-center">
+                <!-- Bộ chọn Scene trực tiếp từ OBS -->
+                <div class="glass px-3 py-1.5 rounded-xl border border-sky-500/40 flex items-center gap-2 shadow-lg">
+                    <span class="text-sky-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Scene OBS:
+                    </span>
+                    <select id="obs-scene-select" onchange="onSelectSceneChanged(this.value)" class="bg-slate-900 text-white font-bold text-xs py-1.5 px-3 rounded-lg border border-slate-700 outline-none cursor-pointer focus:border-sky-500 max-w-[200px]">
+                        <option value="">-- Quét Scene OBS --</option>
+                    </select>
+                    <button onclick="refreshOBSScenes()" title="Quét lại Scene từ OBS" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </button>
+                    <!-- Nút Tạm Dừng / Standby -->
+                    <button id="standby-btn" onclick="setStandby()" title="Tạm dừng / Chuyển về chế độ chờ" class="px-2.5 py-1 bg-amber-600/20 hover:bg-amber-600 text-amber-300 hover:text-white rounded-lg border border-amber-500/40 text-xs font-bold transition-all hidden">
+                        ⏸ Chờ
+                    </button>
+                </div>
+
+                <!-- Nút Cài đặt RTMP Server & Key -->
+                <button onclick="openStreamSettingsModal()" title="Cài đặt RTMP Server & Stream Key sang OBS" class="glass px-3.5 py-2 rounded-xl border border-sky-500/40 hover:border-sky-400 text-sky-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg">
+                    <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Cài Đặt RTMP</span>
+                </button>
+
+                <!-- Nút Start/Stop Live Stream trực tiếp sang OBS -->
+                <button id="stream-control-btn" onclick="toggleStreamControl()" class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border bg-rose-950/40 text-rose-300 border-rose-700/60 hover:bg-rose-600 hover:text-white shadow-lg shadow-rose-950/50">
+                    <span id="stream-dot" class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                    <span id="stream-btn-text">Bắt Đầu Live</span>
+                </button>
+
+                <!-- Quota -->
+                <div class="glass px-4 py-2 rounded-xl border border-amber-500/30">
+                    <span class="text-slate-400 text-[10px] uppercase block tracking-wider font-semibold">Credits Live</span>
+                    <span id="cloud-quota" class="neon-amber font-bold font-mono text-sm">0 Credits</span>
+                </div>
+
+                <!-- Terminate -->
+                <button onclick="terminate()" class="bg-rose-900/20 hover:bg-rose-600 text-rose-400 hover:text-white px-4 py-2 rounded-xl text-xs font-bold border border-rose-500/30 transition-all">
+                    TERMINATE
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Layout Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Left Side (3 cols): Active Player & Dynamic Matrix Grid -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Active Output Pipeline -->
+                <div class="glass p-6 rounded-2xl border-l-4 border-sky-500 shadow-xl relative overflow-hidden">
+                    <div class="flex flex-wrap justify-between items-end gap-4 mb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span id="ping-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+                                <span class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Active Output Pipeline</span>
+                                <span id="brand-tag" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700 font-mono">Chưa chọn Scene</span>
+                                <span id="scene-tag" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700 font-mono">Standby</span>
+                            </div>
+                            <h2 id="vid" class="text-3xl font-extrabold text-white mt-1.5 tracking-wide">Chế độ chờ (Vui lòng chọn Scene)</h2>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400 uppercase tracking-widest block font-semibold">Còn lại</span>
+                            <div id="timer" class="text-4xl font-mono text-amber-400 font-bold">0.0s</div>
+                        </div>
+                    </div>
+                    <!-- Thanh Progress Bar -->
+                    <div class="w-full bg-slate-800/80 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
+                        <div id="bar" class="bg-gradient-to-r from-sky-500 to-blue-600 h-full rounded-full transition-all duration-100 shadow-lg shadow-sky-500/50" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <!-- Video Matrix Grid (Động hoàn toàn theo Scene đã chọn) -->
+                <div class="glass p-6 rounded-2xl shadow-xl">
+                    <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">VIDEO MATRIX GRID</span>
+                            <span id="video-count-badge" class="text-[10px] bg-sky-950 text-sky-400 border border-sky-800 px-2 py-0.5 rounded-full font-mono">0 Videos (base_*)</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="text" id="filter-input" onkeyup="filterVideos()" placeholder="Tìm nhanh video..." class="bg-slate-900 text-xs px-3 py-1.5 rounded-lg border border-slate-700 outline-none focus:border-sky-500 w-40 text-slate-200">
+                            <button id="ft-btn" onclick="toggleFT()" class="px-4 py-1.5 rounded-full border border-slate-700 text-[11px] font-bold uppercase transition-all flex items-center gap-1.5 text-slate-300 hover:border-amber-500">
+                                <span>⚡ FAST TRACK:</span> <span id="ft-st">OFF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Grid Container -->
+                    <div id="video-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-2.5 max-h-[420px] overflow-y-auto p-1">
+                        <div class="col-span-full py-16 text-center text-slate-400 space-y-3">
+                            <div class="text-3xl">🎬</div>
+                            <div class="text-sm font-semibold text-slate-300">HỆ THỐNG ĐANG Ở CHẾ ĐỘ CHỜ (STANDBY)</div>
+                            <div class="text-xs text-slate-500 max-w-md mx-auto">Vui lòng chọn một Scene trong OBS ở thanh công cụ góc trên để hệ thống tự động quét các video <code class="text-sky-400">base_*</code> và kích hoạt phát tự động.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side (1 col): Queue & Live Logs -->
+            <div class="lg:col-span-1 flex flex-col gap-6">
+                <!-- Next Pipeline Queue -->
+                <div class="glass p-5 rounded-2xl flex flex-col h-64 overflow-hidden shadow-xl border-t-2 border-sky-500/40">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="neon-text text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            Next Pipeline Queue
+                        </h3>
+                        <span id="queue-badge" class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">0</span>
+                    </div>
+                    <div id="ql" class="flex flex-col gap-2 overflow-y-auto pr-1 flex-grow">
+                        <div class="text-xs text-slate-500 italic p-2 text-center">Chờ chọn Scene...</div>
+                    </div>
+                </div>
+
+                <!-- Live Logs -->
+                <div class="glass p-5 rounded-2xl flex flex-col h-80 overflow-hidden shadow-xl border-t-2 border-amber-500/50">
+                    <h3 class="text-amber-400 text-xs font-bold mb-3 uppercase tracking-wider flex justify-between items-center">
+                        <span class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-amber-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Live Reception Logs
+                        </span>
+                        <span class="text-[9px] bg-amber-500/20 px-2 py-0.5 rounded text-amber-300 font-mono">STREAM</span>
+                    </h3>
+                    <div id="log-box" class="terminal p-3 rounded-xl text-[10px] text-emerald-400 overflow-y-auto flex-grow space-y-1.5 select-text font-mono">
+                        <div class="text-slate-600 italic">Khởi động hệ thống ở chế độ chờ...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-[11px] text-slate-500 font-mono">
+        HLC CLOUD HYBRID AUTOMATION &copy; 2026 | STANDBY FIRST PROTOCOL
+    </footer>
+
+    <!-- MODAL: CÀI ĐẶT RTMP SERVER & STREAM KEY -->
+    <div id="modal-stream-settings" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 hidden p-4">
+        <div class="glass w-full max-w-xl rounded-2xl p-6 border border-sky-500/40 shadow-2xl space-y-5">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-sky-500/10 border border-sky-500/30 rounded-xl text-sky-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white tracking-wide">Cấu Hình RTMP & Stream Key</h3>
+                        <p class="text-slate-400 text-xs mt-0.5">Tự động đẩy thông số vào OBS Studio mà không cần cấu hình trong OBS.</p>
+                    </div>
+                </div>
+                <button onclick="closeStreamSettingsModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Gợi ý Nền tảng nhanh -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Chọn nhanh nền tảng phát:</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <button type="button" onclick="setQuickTemplate('tiktok')" class="px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 hover:border-sky-500 hover:text-sky-300 text-[11px] font-semibold transition-all">
+                        🎵 TikTok Live
+                    </button>
+                    <button type="button" onclick="setQuickTemplate('shopee')" class="px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 hover:border-amber-500 hover:text-amber-300 text-[11px] font-semibold transition-all">
+                        🛍️ Shopee Live
+                    </button>
+                    <button type="button" onclick="setQuickTemplate('facebook')" class="px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 hover:border-blue-500 hover:text-blue-300 text-[11px] font-semibold transition-all">
+                        📘 Facebook Live
+                    </button>
+                    <button type="button" onclick="setQuickTemplate('youtube')" class="px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 hover:border-red-500 hover:text-red-300 text-[11px] font-semibold transition-all">
+                        ▶️ YouTube Live
+                    </button>
+                </div>
+            </div>
+
+            <!-- RTMP Server URL -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="block text-xs font-semibold text-slate-300">Server URL (RTMP) *</label>
+                    <button type="button" onclick="fetchCurrentStreamSettings()" class="text-[11px] text-sky-400 hover:underline flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Lấy cài đặt hiện tại từ OBS
+                    </button>
+                </div>
+                <input type="text" id="stream-server-input" placeholder="Ví dụ: rtmp://live-upload.tiktok.com/live/" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-sky-500 font-mono transition-all">
+            </div>
+
+            <!-- Stream Key -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Stream Key (Khóa luồng) *</label>
+                <div class="relative">
+                    <input type="password" id="stream-key-input" placeholder="Nhập Stream Key tại đây" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 pr-10 text-xs text-white outline-none focus:border-sky-500 font-mono tracking-wider transition-all">
+                    <button type="button" onclick="toggleStreamKeyVisibility()" class="absolute right-3 top-3 text-slate-400 hover:text-white">
+                        <svg id="eye-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thông báo trạng thái -->
+            <p id="stream-modal-msg" class="text-xs font-semibold hidden"></p>
+
+            <!-- Nút hành động -->
+            <div class="pt-3 border-t border-slate-800 flex justify-end gap-3">
+                <button type="button" onclick="closeStreamSettingsModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all">
+                    Đóng
+                </button>
+                <button type="button" onclick="applyStreamSettingsToOBS()" class="px-5 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl uppercase tracking-wider transition-all shadow-lg shadow-sky-600/30 flex items-center gap-1.5">
+                    <span>Áp Dụng Sang OBS</span>
+                    <span>⚡</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Javascript điều khiển -->
+    <script>
+        let ft = false;
+        let currentProfileVideos = [];
+
+        // --- AUTH & LOGIN ---
+        async function validateCloudKey() {
+            const key = document.getElementById('key-input').value.trim();
+            if(!key) return;
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({api_key: key})
+                });
+                const data = await res.json();
+                if(data.success) {
+                    document.getElementById('auth').classList.add('hidden');
+                    refreshOBSScenes();
+                    updateCycle();
+                } else {
+                    const err = document.getElementById('error-msg');
+                    err.innerText = data.message || "Lỗi xác thực khóa";
+                    err.classList.remove('hidden');
+                }
+            } catch(e) {
+                alert("Lỗi kết nối máy chủ: " + e.message);
+            }
+        }
+
+        // --- FAST TRACK ---
+        function toggleFT() {
+            ft = !ft;
+            const b = document.getElementById('ft-btn');
+            document.getElementById('ft-st').innerText = ft ? 'ON' : 'OFF';
+            if(ft) {
+                b.classList.add('ft-btn-on');
+            } else {
+                b.classList.remove('ft-btn-on');
+            }
+        }
+
+        // --- ORDER VIDEO ---
+        async function orderVideo(vName) {
+            try {
+                const res = await fetch('/api/order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({video_name: vName, ft: ft})
+                });
+                const data = await res.json();
+                if(data.success) {
+                    if(ft) toggleFT();
+                } else {
+                    alert(data.message || "Không thể xếp video");
+                }
+            } catch(e) {
+                console.error("Lỗi order video:", e);
+            }
+        }
+
+        // --- QUÉT & CHỌN SCENE TRỰC TIẾP TỪ OBS ---
+        async function refreshOBSScenes() {
+            const sel = document.getElementById('obs-scene-select');
+            sel.innerHTML = "<option value=''>Đang quét Scene từ OBS...</option>";
+            try {
+                const res = await fetch('/api/obs/scenes');
+                const data = await res.json();
+                if(data.success && data.scenes) {
+                    sel.innerHTML = "<option value=''>-- Chọn Scene OBS để Live --</option>" + 
+                        data.scenes.map(s => `<option value="${s}">${s}</option>`).join('');
+                } else {
+                    sel.innerHTML = `<option value=''>❌ ${data.message || 'Lỗi kết nối OBS'}</option>`;
+                }
+            } catch(e) {
+                sel.innerHTML = `<option value=''>❌ Không kết nối được OBS</option>`;
+            }
+        }
+
+        async function onSelectSceneChanged(sceneName) {
+            if(!sceneName) return;
+            try {
+                const res = await fetch('/api/scene/select', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({scene_name: sceneName})
+                });
+                const data = await res.json();
+                if(data.success && data.profile) {
+                    currentProfileVideos = data.profile.videos || [];
+                    document.getElementById('brand-tag').innerText = data.profile.name;
+                    document.getElementById('scene-tag').innerText = `OBS: ${data.profile.scene_name}`;
+                    document.getElementById('video-count-badge').innerText = `${currentProfileVideos.length} Videos (base_*)`;
+                    document.getElementById('standby-btn').classList.remove('hidden');
+                    renderVideoGrid(currentProfileVideos);
+                } else {
+                    alert(data.message || "Lỗi kích hoạt Scene");
+                }
+            } catch(e) {
+                alert("Lỗi kết nối: " + e.message);
+            }
+        }
+
+        async function setStandby() {
+            try {
+                await fetch('/api/scene/standby', {method: 'POST'});
+                document.getElementById('obs-scene-select').value = "";
+                document.getElementById('standby-btn').classList.add('hidden');
+                document.getElementById('brand-tag').innerText = "Chưa chọn Scene";
+                document.getElementById('scene-tag').innerText = "Standby";
+                document.getElementById('video-count-badge').innerText = "0 Videos (base_*)";
+                currentProfileVideos = [];
+                renderStandbyGrid();
+            } catch(e) {}
+        }
+
+        function renderStandbyGrid() {
+            const grid = document.getElementById('video-grid');
+            grid.innerHTML = `
+                <div class="col-span-full py-16 text-center text-slate-400 space-y-3">
+                    <div class="text-3xl">🎬</div>
+                    <div class="text-sm font-semibold text-slate-300">HỆ THỐNG ĐANG Ở CHẾ ĐỘ CHỜ (STANDBY)</div>
+                    <div class="text-xs text-slate-500 max-w-md mx-auto">Vui lòng chọn một Scene trong OBS ở thanh công cụ góc trên để hệ thống tự động quét các video <code class="text-sky-400">base_*</code> và kích hoạt phát tự động.</div>
+                </div>
+            `;
+        }
+
+        // --- RENDER LƯỚI VIDEO ĐỘNG ---
+        function renderVideoGrid(videos) {
+            const grid = document.getElementById('video-grid');
+            if(!videos || videos.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-10 text-center text-amber-400 text-xs">⚠️ Scene này không có source nào bắt đầu bằng 'base_'. Hãy thêm video có tên base_1, base_2... trong OBS!</div>`;
+                return;
+            }
+
+            grid.innerHTML = videos.map((v, idx) => {
+                const title = v.title || v.name;
+                const dur = v.duration ? `${v.duration}s` : '';
+                return `
+                    <div class="video-card glass-card p-2.5 rounded-xl text-center border flex flex-col justify-between h-20" 
+                         data-name="${v.name}" 
+                         onclick="orderVideo('${v.name}')" 
+                         title="${title} (${dur})">
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 font-mono">
+                            <span class="font-bold text-sky-400">#${idx+1}</span>
+                            <span class="opacity-75 font-mono">${dur}</span>
+                        </div>
+                        <div class="text-[11px] font-bold text-slate-200 truncate py-1">${title}</div>
+                        <div class="text-[9px] text-slate-500 font-mono truncate">${v.name}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterVideos() {
+            const query = document.getElementById('filter-input').value.toLowerCase();
+            const filtered = currentProfileVideos.filter(v => 
+                (v.name && v.name.toLowerCase().includes(query)) || 
+                (v.title && v.title.toLowerCase().includes(query))
+            );
+            renderVideoGrid(filtered);
+        }
+
+        // --- CẬP NHẬT TRẠNG THÁI CHU KỲ (STATE POLLING) ---
+        async function updateCycle() {
+            try {
+                const res = await fetch('/api/state');
+                const d = await res.json();
+
+                if(!d.authorized) {
+                    document.getElementById('auth').classList.remove('hidden');
+                } else {
+                    document.getElementById('auth').classList.add('hidden');
+                }
+
+                // Cập nhật trạng thái Standby hay Active
+                const statusBadge = document.getElementById('status-badge');
+                const pingIndicator = document.getElementById('ping-indicator');
+                const standbyBtn = document.getElementById('standby-btn');
+
+                if(d.is_running && d.current_profile) {
+                    statusBadge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-700/50";
+                    statusBadge.innerHTML = "🟢 ĐANG LIVE (ACTIVE)";
+                    pingIndicator.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
+                    standbyBtn.classList.remove('hidden');
+
+                    document.getElementById('vid').innerText = d.current_video;
+                    document.getElementById('timer').innerText = d.remaining + 's';
+                    document.getElementById('bar').style.width = d.progress + '%';
+                    
+                    document.getElementById('brand-tag').innerText = d.current_profile.name;
+                    document.getElementById('scene-tag').innerText = `OBS: ${d.current_profile.scene_name}`;
+
+                    // Cập nhật selection nếu chưa chọn
+                    const sel = document.getElementById('obs-scene-select');
+                    if(sel.value !== d.current_profile.scene_name && sel.querySelector(`option[value="${d.current_profile.scene_name}"]`)) {
+                        sel.value = d.current_profile.scene_name;
+                    }
+                } else {
+                    statusBadge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-950/60 text-amber-400 border border-amber-700/50";
+                    statusBadge.innerHTML = "🟡 CHẾ ĐỘ CHỜ (STANDBY)";
+                    pingIndicator.className = "w-2.5 h-2.5 rounded-full bg-slate-500";
+                    standbyBtn.classList.add('hidden');
+
+                    document.getElementById('vid').innerText = "Chế độ chờ (Vui lòng chọn Scene)";
+                    document.getElementById('timer').innerText = "0.0s";
+                    document.getElementById('bar').style.width = '0%';
+                }
+
+                document.getElementById('cloud-quota').innerText = d.quota_remaining + ' Credits';
+
+                // Queue
+                const ql = document.getElementById('ql');
+                document.getElementById('queue-badge').innerText = d.queue.length;
+                if(d.queue.length > 0) {
+                    ql.innerHTML = d.queue.map((item, idx) => `
+                        <div class="bg-sky-950/40 text-sky-300 px-3 py-2 rounded-lg border border-sky-800/30 text-xs font-semibold flex justify-between items-center">
+                            <span class="truncate">${item}</span>
+                            <span class="text-[10px] text-sky-500 font-mono">#${idx+1}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    if(d.is_running && d.current_profile) {
+                        ql.innerHTML = `<div class="text-xs text-slate-500 italic p-2 text-center">Auto-Loop Active (${d.current_profile.video_count} vids)</div>`;
+                    } else {
+                        ql.innerHTML = `<div class="text-xs text-slate-500 italic p-2 text-center">Chờ chọn Scene...</div>`;
+                    }
+                }
+
+                // Logs
+                const logBox = document.getElementById('log-box');
+                if(d.logs && d.logs.length > 0) {
+                    logBox.innerHTML = d.logs.map(log => {
+                        let cls = "text-emerald-400";
+                        if(log.includes("[QUEUE]")) cls = "text-amber-400";
+                        if(log.includes("[OBS]")) cls = "text-fuchsia-400";
+                        if(log.includes("[PROFILE]")) cls = "text-sky-400";
+                        if(log.includes("[FAST-SWITCH]")) cls = "text-rose-400 font-bold";
+                        if(log.includes("[SYSTEM]")) cls = "text-cyan-400";
+                        return `<div class="${cls}">${log}</div>`;
+                    }).join('');
+                    logBox.scrollTop = logBox.scrollHeight;
+                }
+
+                // Highlight video card đang phát
+                document.querySelectorAll('.video-card').forEach(n => {
+                    const isPlaying = (n.getAttribute('data-name') === d.current_video);
+                    n.classList.toggle('video-active', isPlaying);
+                });
+
+            } catch(e) {}
+        }
+        setInterval(updateCycle, 500);
+
+        // --- CÀI ĐẶT RTMP & ĐIỀU KHIỂN STREAM TRỰC TIẾP OBS ---
+        let isStreamingActive = false;
+
+        function openStreamSettingsModal() {
+            document.getElementById('modal-stream-settings').classList.remove('hidden');
+            fetchCurrentStreamSettings();
+        }
+
+        function closeStreamSettingsModal() {
+            document.getElementById('modal-stream-settings').classList.add('hidden');
+            const msg = document.getElementById('stream-modal-msg');
+            msg.classList.add('hidden');
+        }
+
+        function setQuickTemplate(platform) {
+            const serverInput = document.getElementById('stream-server-input');
+            if (platform === 'tiktok') {
+                serverInput.value = 'rtmp://live-upload.tiktok.com/live/';
+            } else if (platform === 'shopee') {
+                serverInput.value = 'rtmp://live.shopee.vn/live/';
+            } else if (platform === 'facebook') {
+                serverInput.value = 'rtmps://live-api-s.facebook.com:443/rtmp/';
+            } else if (platform === 'youtube') {
+                serverInput.value = 'rtmp://a.rtmp.youtube.com/live2';
+            }
+        }
+
+        function toggleStreamKeyVisibility() {
+            const input = document.getElementById('stream-key-input');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        async function fetchCurrentStreamSettings() {
+            try {
+                const res = await fetch('/api/stream/settings');
+                const data = await res.json();
+                if (data.success) {
+                    if (data.server) document.getElementById('stream-server-input').value = data.server;
+                    if (data.key) document.getElementById('stream-key-input').value = data.key;
+                }
+            } catch(e) {
+                console.error("Lỗi lấy stream settings:", e);
+            }
+        }
+
+        async function applyStreamSettingsToOBS() {
+            const server = document.getElementById('stream-server-input').value.trim();
+            const key = document.getElementById('stream-key-input').value.trim();
+            const msg = document.getElementById('stream-modal-msg');
+
+            if (!server) {
+                msg.className = "text-xs font-semibold text-rose-400";
+                msg.innerText = "Vui lòng nhập Server URL (RTMP)!";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/stream/settings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({server: server, key: key})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    msg.className = "text-xs font-semibold text-emerald-400";
+                    msg.innerText = "✅ " + data.message;
+                    msg.classList.remove('hidden');
+                    setTimeout(() => {
+                        closeStreamSettingsModal();
+                    }, 1200);
+                } else {
+                    msg.className = "text-xs font-semibold text-rose-400";
+                    msg.innerText = "❌ " + (data.message || "Không thể cập nhật cấu hình OBS");
+                    msg.classList.remove('hidden');
+                }
+            } catch(e) {
+                msg.className = "text-xs font-semibold text-rose-400";
+                msg.innerText = "❌ Lỗi mạng: " + e.message;
+                msg.classList.remove('hidden');
+            }
+        }
+
+        async function toggleStreamControl() {
+            if (isStreamingActive) {
+                if (confirm("XÁC NHẬN: Bạn có chắc chắn muốn DỪNG phát Live Stream trên OBS?")) {
+                    try {
+                        const res = await fetch('/api/stream/stop', {method: 'POST'});
+                        const data = await res.json();
+                        if (!data.success) alert(data.message || "Lỗi dừng stream");
+                        checkStreamStatus();
+                    } catch(e) {
+                        alert("Lỗi: " + e.message);
+                    }
+                }
+            } else {
+                if (confirm("XÁC NHẬN: Bắt đầu phát Live Stream trực tiếp lên máy chủ RTMP từ OBS?")) {
+                    try {
+                        const res = await fetch('/api/stream/start', {method: 'POST'});
+                        const data = await res.json();
+                        if (!data.success) alert(data.message || "Lỗi bắt đầu stream");
+                        checkStreamStatus();
+                    } catch(e) {
+                        alert("Lỗi: " + e.message);
+                    }
+                }
+            }
+        }
+
+        async function checkStreamStatus() {
+            try {
+                const res = await fetch('/api/stream/status');
+                const data = await res.json();
+                const btn = document.getElementById('stream-control-btn');
+                const dot = document.getElementById('stream-dot');
+                const text = document.getElementById('stream-btn-text');
+
+                if (data.success && data.active) {
+                    isStreamingActive = true;
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border bg-rose-600 text-white border-rose-500 shadow-lg shadow-rose-600/50 animate-pulse";
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-white";
+                    text.innerText = `Dừng Live (${data.timecode || 'LIVE'})`;
+                } else {
+                    isStreamingActive = false;
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border bg-rose-950/40 text-rose-300 border-rose-700/60 hover:bg-rose-600 hover:text-white shadow-lg shadow-rose-950/50";
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
+                    text.innerText = "Bắt Đầu Live";
+                }
+            } catch(e) {}
+        }
+        setInterval(checkStreamStatus, 1500);
+
+        // --- TERMINATE CORE ---
+        function terminate() {
+            if(confirm("XÁC NHẬN: Bạn có chắc chắn muốn tắt hoàn toàn tiến trình ngầm và giải phóng OBS?")) {
+                fetch('/api/terminate', {method: 'POST'}).then(() => {
+                    document.body.innerHTML = "<div class='h-screen flex items-center justify-center bg-black'><h1 class='text-rose-500 font-bold text-3xl tracking-widest font-mono'>CORE TERMINATED.</h1></div>";
+                    setTimeout(() => window.close(), 1000);
+                });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            refreshOBSScenes();
+            updateCycle();
+            checkStreamStatus();
+        });
+    </script>
+</body>
+</html>

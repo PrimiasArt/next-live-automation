@@ -1,0 +1,380 @@
+{
+  "id": "reup_1",
+  "name": "Scene: Reup 1",
+  "scene_name": "Reup 1",
+  "overlap_time": 1.0,
+  "videos": [
+    {
+      "name": "base_1b",
+      "duration": 30.13,
+      "title": "base_1b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_1b.mp4"
+    },
+    {
+      "name": "base_2b",
+      "duration": 31.8,
+      "title": "base_2b",
+      "file_path": "D:/AI Solution/Source/new req/base_2b.mp4"
+    },
+    {
+      "name": "base_3b",
+      "duration": 30.83,
+      "title": "base_3b",
+      "file_path": "D:/AI Solution/Source/new req/base_3b.mp4"
+    },
+    {
+      "name": "base_4b",
+      "duration": 39.18,
+      "title": "base_4b",
+      "file_path": "D:/AI Solution/Source/new req/base_4b.mp4"
+    },
+    {
+      "name": "base_5b",
+      "duration": 36.73,
+      "title": "base_5b",
+      "file_path": "D:/AI Solution/Source/new req/base_5b.mp4"
+    },
+    {
+      "name": "base_6b",
+      "duration": 32.05,
+      "title": "base_6b",
+      "file_path": "D:/AI Solution/Source/new req/base_6b.mp4"
+    },
+    {
+      "name": "base_7b",
+      "duration": 38.47,
+      "title": "base_7b",
+      "file_path": "D:/AI Solution/Source/new req/base_7b.mp4"
+    },
+    {
+      "name": "base_8b",
+      "duration": 42.85,
+      "title": "base_8b",
+      "file_path": "D:/AI Solution/Source/new req/base_8b.mp4"
+    },
+    {
+      "name": "base_9b",
+      "duration": 47.45,
+      "title": "base_9b",
+      "file_path": "D:/AI Solution/Source/new req/base_9b.mp4"
+    },
+    {
+      "name": "base_10b",
+      "duration": 47.85,
+      "title": "base_10b",
+      "file_path": "D:/AI Solution/Source/new req/base_10b.mp4"
+    },
+    {
+      "name": "base_11b",
+      "duration": 22.52,
+      "title": "base_11b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_11b.mp4"
+    },
+    {
+      "name": "base_12b",
+      "duration": 23.88,
+      "title": "base_12b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_12b.mp4"
+    },
+    {
+      "name": "base_13b",
+      "duration": 24.92,
+      "title": "base_13b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_13b.mp4"
+    },
+    {
+      "name": "base_14b",
+      "duration": 24.13,
+      "title": "base_14b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_14b.mp4"
+    },
+    {
+      "name": "base_15b",
+      "duration": 23.42,
+      "title": "base_15b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_15b.mp4"
+    },
+    {
+      "name": "base_16b",
+      "duration": 23.4,
+      "title": "base_16b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_16b.mp4"
+    },
+    {
+      "name": "base_17b",
+      "duration": 23.8,
+      "title": "base_17b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_17b.mp4"
+    },
+    {
+      "name": "base_18b",
+      "duration": 21.32,
+      "title": "base_18b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_18b.mp4"
+    },
+    {
+      "name": "base_19b",
+      "duration": 22.43,
+      "title": "base_19b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_19b.mp4"
+    },
+    {
+      "name": "base_20b",
+      "duration": 24.17,
+      "title": "base_20b",
+      "file_path": "D:/AI PC/Project/Social Elite/Video Re Up Auto Swap/base_20b.mp4"
+    },
+    {
+      "name": "base_21b",
+      "duration": 14.9,
+      "title": "base_21b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/01_chao.mp4"
+    },
+    {
+      "name": "base_22b",
+      "duration": 11.72,
+      "title": "base_22b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/02_chao.mp4"
+    },
+    {
+      "name": "base_23b",
+      "duration": 17.78,
+      "title": "base_23b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/03_phan_loai.mp4"
+    },
+    {
+      "name": "base_24b",
+      "duration": 16.98,
+      "title": "base_24b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/04_sach_va_an_toan.mp4"
+    },
+    {
+      "name": "base_25b",
+      "duration": 15.27,
+      "title": "base_25b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/05_dam_dac_tiet_kiem.mp4"
+    },
+    {
+      "name": "base_26b",
+      "duration": 13.72,
+      "title": "base_26b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/06_deal_hoi.mp4"
+    },
+    {
+      "name": "base_27b",
+      "duration": 17.08,
+      "title": "base_27b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/07_an_toan.mp4"
+    },
+    {
+      "name": "base_28b",
+      "duration": 15.9,
+      "title": "base_28b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/08_nguon_goc.mp4"
+    },
+    {
+      "name": "base_29b",
+      "duration": 16.8,
+      "title": "base_29b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/09_fomo.mp4"
+    },
+    {
+      "name": "base_30b",
+      "duration": 10.32,
+      "title": "base_30b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/10_confirm_don.mp4"
+    },
+    {
+      "name": "base_31b",
+      "duration": 24.0,
+      "title": "base_31b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/11_confirm_don.mp4"
+    },
+    {
+      "name": "base_32b",
+      "duration": 13.35,
+      "title": "base_32b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/12_tuong_tac.mp4"
+    },
+    {
+      "name": "base_33b",
+      "duration": 13.58,
+      "title": "base_33b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/13_pack.mp4"
+    },
+    {
+      "name": "base_34b",
+      "duration": 9.8,
+      "title": "base_34b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/14_hygiene_intro.mp4"
+    },
+    {
+      "name": "base_35b",
+      "duration": 13.53,
+      "title": "base_35b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/15_thom_diu_nhe.mp4"
+    },
+    {
+      "name": "base_36b",
+      "duration": 12.08,
+      "title": "base_36b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/16_da_dang_mui.mp4"
+    },
+    {
+      "name": "base_37b",
+      "duration": 13.98,
+      "title": "base_37b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/17_huong_dan_gia.mp4"
+    },
+    {
+      "name": "base_38b",
+      "duration": 11.98,
+      "title": "base_38b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/18_sale_doc_quyen.mp4"
+    },
+    {
+      "name": "base_39b",
+      "duration": 13.25,
+      "title": "base_39b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/19_check_gia_sau_ma.mp4"
+    },
+    {
+      "name": "base_40b",
+      "duration": 11.73,
+      "title": "base_40b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/20_luu_huong_lau.mp4"
+    },
+    {
+      "name": "base_41b",
+      "duration": 8.98,
+      "title": "base_41b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/21_giat_may_ben.mp4"
+    },
+    {
+      "name": "base_42b",
+      "duration": 9.55,
+      "title": "base_42b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/22_giat_tay_mem.mp4"
+    },
+    {
+      "name": "base_43b",
+      "duration": 13.3,
+      "title": "base_43b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/23_cach_dung_chuan.mp4"
+    },
+    {
+      "name": "base_44b",
+      "duration": 12.85,
+      "title": "base_44b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/24_combo_tiet_kiem.mp4"
+    },
+    {
+      "name": "base_45b",
+      "duration": 11.27,
+      "title": "base_45b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/25_san_freeship.mp4"
+    },
+    {
+      "name": "base_46b",
+      "duration": 12.1,
+      "title": "base_46b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/26_an_toan_tiet_kiem.mp4"
+    },
+    {
+      "name": "base_47b",
+      "duration": 16.95,
+      "title": "base_47b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/27_do_tre_em.mp4"
+    },
+    {
+      "name": "base_48b",
+      "duration": 12.85,
+      "title": "base_48b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/28_so_sanh_loi_the.mp4"
+    },
+    {
+      "name": "base_49b",
+      "duration": 10.83,
+      "title": "base_49b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/29_huong_dan_mua.mp4"
+    },
+    {
+      "name": "base_50b",
+      "duration": 10.95,
+      "title": "base_50b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/30_kiem_tra_thong_tin.mp4"
+    },
+    {
+      "name": "base_51b",
+      "duration": 9.5,
+      "title": "base_51b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/31_so_luong_co_han.mp4"
+    },
+    {
+      "name": "base_52b",
+      "duration": 9.02,
+      "title": "base_52b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/32_uu_dai_gio_vang.mp4"
+    },
+    {
+      "name": "base_53b",
+      "duration": 13.45,
+      "title": "base_53b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/33_mem_soi_vai.mp4"
+    },
+    {
+      "name": "base_54b",
+      "duration": 12.33,
+      "title": "base_54b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/34_giu_mau_ao.mp4"
+    },
+    {
+      "name": "base_55b",
+      "duration": 14.22,
+      "title": "base_55b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/35_tu_van_theo_gu.mp4"
+    },
+    {
+      "name": "base_56b",
+      "duration": 13.37,
+      "title": "base_56b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/36_review_thuc_te.mp4"
+    },
+    {
+      "name": "base_57b",
+      "duration": 12.32,
+      "title": "base_57b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/37_xac_nhan_don.mp4"
+    },
+    {
+      "name": "base_58b",
+      "duration": 10.45,
+      "title": "base_58b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/38_anh_duong.mp4"
+    },
+    {
+      "name": "base_59b",
+      "duration": 12.47,
+      "title": "base_59b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/39_anh_duong.mp4"
+    },
+    {
+      "name": "base_60b",
+      "duration": 9.0,
+      "title": "base_60b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/40_anh_duong.mp4"
+    },
+    {
+      "name": "base_61b",
+      "duration": 11.0,
+      "title": "base_61b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/41_diu_em.mp4"
+    },
+    {
+      "name": "base_62b",
+      "duration": 12.32,
+      "title": "base_62b",
+      "file_path": "D:/AI PC/Project/Social Elite/AI Live Auto Interactive/Scenarios/42_mau_don.mp4"
+    }
+  ]
+}

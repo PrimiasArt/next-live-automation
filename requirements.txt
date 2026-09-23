@@ -2,3 +2,5 @@ obsws-python>=1.8.0
 flask>=3.0.0
 flask-cors>=5.0.0
 requests>=2.31.0
+opencv-python>=4.8.0
+streamlit>=1.30.0

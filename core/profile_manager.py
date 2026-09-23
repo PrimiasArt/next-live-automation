@@ -1,7 +1,11 @@
 import os
 import json
 import re
-import cv2
+
+try:
+    import cv2
+except Exception:
+    cv2 = None
 from config import PROFILES_DIR
 
 def natural_sort_key(s: str):
@@ -14,7 +18,7 @@ def get_file_duration_cv2(file_path: str):
     """
     Đọc thời lượng video chính xác đến phần trăm giây bằng OpenCV trực tiếp từ file
     """
-    if not file_path or not os.path.exists(file_path):
+    if not cv2 or not file_path or not os.path.exists(file_path):
         return None
     try:
         cap = cv2.VideoCapture(file_path)
